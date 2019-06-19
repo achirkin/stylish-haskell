@@ -1,3 +1,5 @@
+This is a clone of the master branch on 2019.06.19 without TemplateHaskell and file-embed in the default build.
+
 stylish-haskell
 ===============
 

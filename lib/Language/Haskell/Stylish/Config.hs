@@ -1,6 +1,5 @@
 --------------------------------------------------------------------------------
 {-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE TemplateHaskell   #-}
 module Language.Haskell.Stylish.Config
     ( Extensions
     , Config (..)
@@ -16,7 +15,6 @@ import           Data.Aeson                                       (FromJSON (..)
 import qualified Data.Aeson                                       as A
 import qualified Data.Aeson.Types                                 as A
 import qualified Data.ByteString                                  as B
-import qualified Data.FileEmbed                                   as FileEmbed
 import           Data.List                                        (inits,
                                                                    intercalate)
 import           Data.Map                                         (Map)
@@ -69,7 +67,250 @@ configFileName = ".stylish-haskell.yaml"
 
 --------------------------------------------------------------------------------
 defaultConfigBytes :: B.ByteString
-defaultConfigBytes = $(FileEmbed.embedFile "data/stylish-haskell.yaml")
+defaultConfigBytes =
+  "# stylish-haskell configuration file\n\
+  \# ==================================\n\
+
+  \# The stylish-haskell tool is mainly configured by specifying steps. These steps\n\
+  \# are a list, so they have an order, and one specific step may appear more than\n\
+  \# once (if needed). Each file is processed by these steps in the given order.\n\
+  \steps:\n\
+  \  # Convert some ASCII sequences to their Unicode equivalents. This is disabled\n\
+  \  # by default.\n\
+  \  # - unicode_syntax:\n\
+  \  #     # In order to make this work, we also need to insert the UnicodeSyntax\n\
+  \  #     # language pragma. If this flag is set to true, we insert it when it's\n\
+  \  #     # not already present. You may want to disable it if you configure\n\
+  \  #     # language extensions using some other method than pragmas. Default:\n\
+  \  #     # true.\n\
+  \  #     add_language_pragma: true\n\
+  \\n\
+  \  # Align the right hand side of some elements.  This is quite conservative\n\
+  \  # and only applies to statements where each element occupies a single\n\
+  \  # line. All default to true.\n\
+  \  - simple_align:\n\
+  \      cases: true\n\
+  \      top_level_patterns: true\n\
+  \      records: true\n\
+  \\n\
+  \  # Import cleanup\n\
+  \  - imports:\n\
+  \      # There are different ways we can align names and lists.\n\
+  \      #\n\
+  \      # - global: Align the import names and import list throughout the entire\n\
+  \      #   file.\n\
+  \      #\n\
+  \      # - file: Like global, but don't add padding when there are no qualified\n\
+  \      #   imports in the file.\n\
+  \      #\n\
+  \      # - group: Only align the imports per group (a group is formed by adjacent\n\
+  \      #   import lines).\n\
+  \      #\n\
+  \      # - none: Do not perform any alignment.\n\
+  \      #\n\
+  \      # Default: global.\n\
+  \      align: global\n\
+  \\n\
+  \      # The following options affect only import list alignment.\n\
+  \      #\n\
+  \      # List align has following options:\n\
+  \      #\n\
+  \      # - after_alias: Import list is aligned with end of import including\n\
+  \      #   'as' and 'hiding' keywords.\n\
+  \      #\n\
+  \      #   > import qualified Data.List      as List (concat, foldl, foldr, head,\n\
+  \      #   >                                          init, last, length)\n\
+  \      #\n\
+  \      # - with_alias: Import list is aligned with start of alias or hiding.\n\
+  \      #\n\
+  \      #   > import qualified Data.List      as List (concat, foldl, foldr, head,\n\
+  \      #   >                                 init, last, length)\n\
+  \      #\n\
+  \      # - with_module_name: Import list is aligned `list_padding` spaces after\n\
+  \      #   the module name.\n\
+  \      #\n\
+  \      #   > import qualified Data.List      as List (concat, foldl, foldr, head,\n\
+  \      #                          init, last, length)\n\
+  \      #\n\
+  \      #   This is mainly intended for use with `pad_module_names: false`.\n\
+  \      #\n\
+  \      #   > import qualified Data.List as List (concat, foldl, foldr, head,\n\
+  \      #                          init, last, length, scanl, scanr, take, drop,\n\
+  \      #                          sort, nub)\n\
+  \      #\n\
+  \      # - new_line: Import list starts always on new line.\n\
+  \      #\n\
+  \      #   > import qualified Data.List      as List\n\
+  \      #   >     (concat, foldl, foldr, head, init, last, length)\n\
+  \      #\n\
+  \      # Default: after_alias\n\
+  \      list_align: after_alias\n\
+  \\n\
+  \      # Right-pad the module names to align imports in a group:\n\
+  \      #\n\
+  \      # - true: a little more readable\n\
+  \      #\n\
+  \      #   > import qualified Data.List       as List (concat, foldl, foldr,\n\
+  \      #   >                                           init, last, length)\n\
+  \      #   > import qualified Data.List.Extra as List (concat, foldl, foldr,\n\
+  \      #   >                                           init, last, length)\n\
+  \      #\n\
+  \      # - false: diff-safe\n\
+  \      #\n\
+  \      #   > import qualified Data.List as List (concat, foldl, foldr, init,\n\
+  \      #   >                                     last, length)\n\
+  \      #   > import qualified Data.List.Extra as List (concat, foldl, foldr,\n\
+  \      #   >                                           init, last, length)\n\
+  \      #\n\
+  \      # Default: true\n\
+  \      pad_module_names: true\n\
+  \\n\
+  \      # Long list align style takes effect when import is too long. This is\n\
+  \      # determined by 'columns' setting.\n\
+  \      #\n\
+  \      # - inline: This option will put as much specs on same line as possible.\n\
+  \      #\n\
+  \      # - new_line: Import list will start on new line.\n\
+  \      #\n\
+  \      # - new_line_multiline: Import list will start on new line when it's\n\
+  \      #   short enough to fit to single line. Otherwise it'll be multiline.\n\
+  \      #\n\
+  \      # - multiline: One line per import list entry.\n\
+  \      #   Type with constructor list acts like single import.\n\
+  \      #\n\
+  \      #   > import qualified Data.Map as M\n\
+  \      #   >     ( empty\n\
+  \      #   >     , singleton\n\
+  \      #   >     , ...\n\
+  \      #   >     , delete\n\
+  \      #   >     )\n\
+  \      #\n\
+  \      # Default: inline\n\
+  \      long_list_align: inline\n\
+  \\n\
+  \      # Align empty list (importing instances)\n\
+  \      #\n\
+  \      # Empty list align has following options\n\
+  \      #\n\
+  \      # - inherit: inherit list_align setting\n\
+  \      #\n\
+  \      # - right_after: () is right after the module name:\n\
+  \      #\n\
+  \      #   > import Vector.Instances ()\n\
+  \      #\n\
+  \      # Default: inherit\n\
+  \      empty_list_align: inherit\n\
+  \\n\
+  \      # List padding determines indentation of import list on lines after import.\n\
+  \      # This option affects 'long_list_align'.\n\
+  \      #\n\
+  \      # - <integer>: constant value\n\
+  \      #\n\
+  \      # - module_name: align under start of module name.\n\
+  \      #   Useful for 'file' and 'group' align settings.\n\
+  \      #\n\
+  \      # Default: 4\n\
+  \      list_padding: 4\n\
+  \\n\
+  \      # Separate lists option affects formatting of import list for type\n\
+  \      # or class. The only difference is single space between type and list\n\
+  \      # of constructors, selectors and class functions.\n\
+  \      #\n\
+  \      # - true: There is single space between Foldable type and list of it's\n\
+  \      #   functions.\n\
+  \      #\n\
+  \      #   > import Data.Foldable (Foldable (fold, foldl, foldMap))\n\
+  \      #\n\
+  \      # - false: There is no space between Foldable type and list of it's\n\
+  \      #   functions.\n\
+  \      #\n\
+  \      #   > import Data.Foldable (Foldable(fold, foldl, foldMap))\n\
+  \      #\n\
+  \      # Default: true\n\
+  \      separate_lists: true\n\
+  \\n\
+  \      # Space surround option affects formatting of import lists on a single\n\
+  \      # line. The only difference is single space after the initial\n\
+  \      # parenthesis and a single space before the terminal parenthesis.\n\
+  \      #\n\
+  \      # - true: There is single space associated with the enclosing\n\
+  \      #   parenthesis.\n\
+  \      #\n\
+  \      #   > import Data.Foo ( foo )\n\
+  \      #\n\
+  \      # - false: There is no space associated with the enclosing parenthesis\n\
+  \      #\n\
+  \      #   > import Data.Foo (foo)\n\
+  \      #\n\
+  \      # Default: false\n\
+  \      space_surround: false\n\
+  \\n\
+  \  # Language pragmas\n\
+  \  - language_pragmas:\n\
+  \      # We can generate different styles of language pragma lists.\n\
+  \      #\n\
+  \      # - vertical: Vertical-spaced language pragmas, one per line.\n\
+  \      #\n\
+  \      # - compact: A more compact style.\n\
+  \      #\n\
+  \      # - compact_line: Similar to compact, but wrap each line with\n\
+  \      #   `{-#LANGUAGE #-}'.\n\
+  \      #\n\
+  \      # Default: vertical.\n\
+  \      style: vertical\n\
+
+  \      # Align affects alignment of closing pragma brackets.\n\
+  \      #\n\
+  \      # - true: Brackets are aligned in same column.\n\
+  \      #\n\
+  \      # - false: Brackets are not aligned together. There is only one space\n\
+  \      #   between actual import and closing bracket.\n\
+  \      #\n\
+  \      # Default: true\n\
+  \      align: true\n\
+  \\n\
+  \      # stylish-haskell can detect redundancy of some language pragmas. If this\n\
+  \      # is set to true, it will remove those redundant pragmas. Default: true.\n\
+  \      remove_redundant: true\n\
+  \\n\
+  \  # Replace tabs by spaces. This is disabled by default.\n\
+  \  # - tabs:\n\
+  \  #     # Number of spaces to use for each tab. Default: 8, as specified by the\n\
+  \  #     # Haskell report.\n\
+  \  #     spaces: 8\n\
+  \\n\
+  \  # Remove trailing whitespace\n\
+  \  - trailing_whitespace: {}\n\
+  \\n\
+  \  # Squash multiple spaces between the left and right hand sides of some\n\
+  \  # elements into single spaces. Basically, this undoes the effect of\n\
+  \  # simple_align but is a bit less conservative.\n\
+  \  # - squash: {}\n\
+  \\n\
+  \# A common setting is the number of columns (parts of) code will be wrapped\n\
+  \# to. Different steps take this into account. Default: 80.\n\
+  \columns: 80\n\
+  \\n\
+  \# By default, line endings are converted according to the OS. You can override\n\
+  \# preferred format here.\n\
+  \#\n\
+  \# - native: Native newline format. CRLF on Windows, LF on other OSes.\n\
+  \#\n\
+  \# - lf: Convert to LF (\"\\n\").\n\
+  \#\n\
+  \# - crlf: Convert to CRLF (\"\r\\n\").\n\
+  \#\n\
+  \# Default: native.\n\
+  \newline: native\n\
+  \\n\
+  \# Sometimes, language extensions are specified in a cabal file or from the\n\
+  \# command line instead of using language pragmas in the file. stylish-haskell\n\
+  \# needs to be aware of these, so it can parse the file correctly.\n\
+  \#\n\
+  \# No language extensions are enabled by default.\n\
+  \# language_extensions:\n\
+  \  # - TemplateHaskell\n\
+  \  # - QuasiQuotes"
 
 
 --------------------------------------------------------------------------------
