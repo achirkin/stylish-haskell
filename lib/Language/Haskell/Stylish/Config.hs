@@ -298,7 +298,7 @@ defaultConfigBytes =
   \#\n\
   \# - lf: Convert to LF (\"\\n\").\n\
   \#\n\
-  \# - crlf: Convert to CRLF (\"\r\\n\").\n\
+  \# - crlf: Convert to CRLF (\"\\r\\n\").\n\
   \#\n\
   \# Default: native.\n\
   \newline: native\n\
